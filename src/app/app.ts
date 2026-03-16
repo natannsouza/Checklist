@@ -9,6 +9,7 @@ import { Checkbox } from './components/checkbox/checkbox';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
+
 export class App {
   protected readonly title = signal('checklist');
 }

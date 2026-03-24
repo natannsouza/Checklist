@@ -1,47 +1,44 @@
 <div
-  class="w-full h-screen bg-linear-to-br from-cyan-700 to-slate-800 flex items-center justify-center p-4"
+  class="w-full h-screen flex bg-[url('/bg-simp-yellow.png')] bg-no-repeat bg-cover items-center justify-center p-4"
 >
   <div
     id="box"
-    class="w-full max-w-2xl max-h-screen bg-white rounded-2xl shadow-2xl p-8 flex flex-col justify-center items-center gap-6"
+    class="w-full max-w-2xl max-h-screen bg-white/75 backdrop-blur-md rounded-3xl shadow-2xl border border-white/50 p-8 flex flex-col justify-center items-center gap-6"
   >
-    <div class="w-full text-center">
-      <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Weekly Checks</h1>
-    </div>
-    <div>
-      <div class="flex items-center border border-cyan-800 p-2 rounded-sm">
-        <lucide-icon class="w-6 h-6 mx-2" [img]="icons.CodeXml"></lucide-icon>
-        <app-checkbox [storageKey]="'CodeXml'"></app-checkbox>
+    <div class="mx-2">
+      <div class="w-full text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 tracking-tight mb-2">Weekly Checks</h1>
       </div>
-
-    </div>
-    <div>
-      <div class="flex items-center border border-cyan-800 p-2 rounded-sm">
-        <lucide-icon class="w-6 h-6 mx-2" [img]="icons.University"></lucide-icon>
-        <app-checkbox [storageKey]="'University'"></app-checkbox>
+      <div>
+        <div class="flex items-center bg-white/80 hover:bg-white transition-all border border-gray-200 rounded-2xl shadow-sm p-2 my-4">
+          <lucide-icon class="w-6 h-6 mx-2 text-gray-600 shrink-0" [img]="icons.CodeXml"></lucide-icon>
+          <app-checkbox [storageKey]="'CodeXml'"></app-checkbox>
+        </div>
       </div>
-
-    </div>
-    <div>
-      <div class="flex items-center border border-cyan-800 p-2 rounded-sm">
-        <lucide-icon class="w-6 h-6 mx-2" [img]="icons.SquareActivity"></lucide-icon>
-              <app-checkbox [storageKey]="'SquareActivity'"></app-checkbox>
+      <div>
+        <div class="flex items-center bg-white/80 hover:bg-white transition-all border border-gray-200 rounded-2xl shadow-sm p-2 my-4">
+          <lucide-icon class="w-6 h-6 mx-2 text-gray-600 shrink-0" [img]="icons.University"></lucide-icon>
+          <app-checkbox [storageKey]="'University'"></app-checkbox>
+        </div>
       </div>
-
-    </div>
-    <div>
-      <div class="flex items-center border border-cyan-800 p-2 rounded-sm">
-        <lucide-icon class="w-6 h-6 mx-2" [img]="icons.Languages"></lucide-icon>
-         <app-checkbox [storageKey]="'Languages'"></app-checkbox>
+      <div>
+        <div class="flex items-center bg-white/80 hover:bg-white transition-all border border-gray-200 rounded-2xl shadow-sm p-2 my-4">
+          <lucide-icon class="w-6 h-6 mx-2 text-gray-600 shrink-0" [img]="icons.SquareActivity"></lucide-icon>
+          <app-checkbox [storageKey]="'SquareActivity'"></app-checkbox>
+        </div>
       </div>
-
-    </div>
-    <div>
-      <div class="flex items-center border border-cyan-800 p-2 rounded-sm">
-        <lucide-icon class="w-6 h-6 mx-2" [img]="icons.Book"></lucide-icon>
-        <app-checkbox [storageKey]="'Book'"></app-checkbox>
+      <div>
+        <div class="flex items-center bg-white/80 hover:bg-white transition-all border border-gray-200 rounded-2xl shadow-sm p-2 my-4">
+          <lucide-icon class="w-6 h-6 mx-2 text-gray-600 shrink-0" [img]="icons.Languages"></lucide-icon>
+          <app-checkbox [storageKey]="'Languages'"></app-checkbox>
+        </div>
       </div>
-
+      <div>
+        <div class="flex items-center bg-white/80 hover:bg-white transition-all border border-gray-200 rounded-2xl shadow-sm p-2 my-4">
+          <lucide-icon class="w-6 h-6 mx-2 text-gray-600 shrink-0" [img]="icons.Book"></lucide-icon>
+          <app-checkbox [storageKey]="'Book'"></app-checkbox>
+        </div>
+      </div>
     </div>
   </div>
 </div>

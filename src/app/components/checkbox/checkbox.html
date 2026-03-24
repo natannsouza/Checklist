@@ -5,18 +5,22 @@
         class="flex items-center p-2 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-all group"
       >
         <p class="hidden">{{ storageKey() }}</p>
-        <input
-          (click)="toggle(i)"
-          type="checkbox"
-          [checked]="array.state"
-          [value]="storageKey()"
-          name="code"
-          class="w-7 h-7 text-cyan-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-cyan-500 focus:ring-2 transition-all"
-        />
+        <span (click)="toggle(i)" class="w-7 h-7 border-2 border-amber-300 rounded-sm">
+          @if (array.state === 1) {
+            <lucide-icon [img]="icons.Check" />
+          }
+          @if (array.state === 2) {
+            <lucide-icon [img]="icons.X" />
+          }
+        </span>
       </label>
     }
-    <div class="flex justify-center my-auto">
-      <lucide-icon class="w-4 h-4 md:w-6 md:h-6" [img]="icons.Trash2"></lucide-icon>
+    <div
+      class="flex justify-center my-auto p-2 hover:bg-red-600 rounded-xl  transition-all group"
+    >
+      <button class="cursor-pointer" (click)="toggleNull()">
+        <lucide-icon class=" w-4 h-4 md:w-6 md:h-6" [img]="icons.Trash2"></lucide-icon>
+      </button>
     </div>
   </div>
 </div>

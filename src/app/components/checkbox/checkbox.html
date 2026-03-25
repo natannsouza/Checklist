@@ -1,25 +1,27 @@
 <div class="w-full space-y-3">
-  <div class="grid grid-cols-8 not-even:gap-2 mx-2 p-2 rounded-sm">
+  <div class="grid grid-cols-8 gap-2 mx-2 p-2 rounded-sm">
     @for (array of items(); track array.id; let i = $index) {
       <label
-        class="flex items-center p-2 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-all group"
+        class="flex items-center justify-center p-1.5 md:p-2 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-all group"
       >
         <p class="hidden">{{ storageKey() }}</p>
-        <span (click)="toggle(i)" class="w-7 h-7 border-2 border-amber-300 rounded-sm">
+        <span
+          (click)="toggle(i)"
+          class="w-5 h-5 md:w-7 md:h-7 border-2 border-amber-300 rounded-sm flex items-center justify-center"
+        >
           @if (array.state === 1) {
-            <lucide-icon [img]="icons.Check" />
+            <lucide-icon class="w-3 h-3 md:w-5 md:h-5" [img]="icons.Check" />
           }
           @if (array.state === 2) {
-            <lucide-icon [img]="icons.X" />
+            <lucide-icon class="w-3 h-3 md:w-5 md:h-5" [img]="icons.X" />
           }
         </span>
       </label>
     }
-    <div
-      class="flex justify-center my-auto p-2 hover:bg-red-600 rounded-xl  transition-all group"
-    >
+
+    <div class="flex justify-center items-center p-1.5 md:p-2 hover:bg-red-600 rounded-xl transition-all group">
       <button class="cursor-pointer" (click)="toggleNull()">
-        <lucide-icon class=" w-4 h-4 md:w-6 md:h-6" [img]="icons.Trash2"></lucide-icon>
+        <lucide-icon class="w-4 h-4 md:w-6 md:h-6" [img]="icons.Trash2"></lucide-icon>
       </button>
     </div>
   </div>

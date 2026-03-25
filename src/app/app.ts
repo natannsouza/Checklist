@@ -1,12 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Checkbox } from './components/checkbox/checkbox';
-import { Book, CodeXml, Languages, LucideAngularModule, School, SquareActivity, University } from 'lucide-angular';
+import { Book, CodeXml, Languages, LucideAngularModule, SquareActivity, University } from 'lucide-angular';
 
 @Component({
   selector: 'app-root',
   standalone:true,
-  imports: [RouterOutlet, Checkbox, LucideAngularModule],
+  imports: [RouterOutlet, LucideAngularModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

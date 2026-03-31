@@ -5,7 +5,7 @@ import {
   Languages,
   LucideAngularModule,
   SquareActivity,
-  University,CalendarDays
+  University,CalendarDays, Dumbbell, Bitcoin 
 } from 'lucide-angular';
 import { Checkbox } from '../checkbox/checkbox';
 import { DatePipe } from '@angular/common';
@@ -18,7 +18,7 @@ import { interval } from 'rxjs';
   styleUrl: './home.css',
 })
 export class Home implements OnInit {
-  icons = { CodeXml, Book, SquareActivity, University, Languages, CalendarDays };
+  icons = { CodeXml, Book, SquareActivity, University, Languages, CalendarDays,Dumbbell, Bitcoin    };
 
   data = signal(new Date());
 

@@ -4,6 +4,11 @@ import { Home } from './components/home/home';
 
 export const routes: Routes = [
   {
+    path: 'microsoft-auth',
+    loadComponent: () =>
+      import('./components/microsoft-todo/microsoft-auth').then((m) => m.MicrosoftAuth),
+  },
+  {
     path: '',
     component: Home,
     pathMatch: 'full',

@@ -2,6 +2,19 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.2.
 
+## Conectar o Microsoft To Do
+
+O painel abre com os checks semanais disponíveis. Para adicionar e concluir tarefas nas suas listas do Microsoft To Do, configure a conexão uma vez neste navegador.
+
+1. Abra o Checklist e copie o URI mostrado em **Configurar conexão**. Com `npm start`, o padrão é `http://localhost:4200/microsoft-auth`.
+2. Em **Registros de aplicativo** no Microsoft Entra, registre o Checklist. Para usar uma conta pessoal, escolha um tipo de conta que inclua contas pessoais Microsoft. Em **Autenticação**, adicione o URI copiado à plataforma **Aplicativo de página única (SPA)**. [Registro de SPA no Microsoft Entra](https://learn.microsoft.com/entra/identity-platform/scenario-spa-app-registration)
+3. Em **Permissões de API**, adicione a permissão **delegada** `Tasks.ReadWrite` do Microsoft Graph. A configuração no Checklist usa apenas o ID público do aplicativo. [Permissão para criar tarefas](https://learn.microsoft.com/graph/api/todotasklist-post-tasks)
+4. Cole a **ID do aplicativo (cliente)** no painel e escolha **Salvar configuração**. Depois, clique em **Conectar conta Microsoft**, selecione a conta usada no To Do e conceda acesso na janela da Microsoft.
+
+Escolha uma lista existente no seletor. Use **Adicionar** para criar uma tarefa e o círculo ao lado do título para concluí-la. **Atualizar** carrega as alterações feitas no Microsoft To Do. As tarefas ficam na Microsoft e os checks ficam no `localStorage` do navegador.
+
+Se hospedar o app, configure o host para servir a página Angular em `/microsoft-auth` e registre o URI HTTPS correspondente no Microsoft Entra. A rota de retorno precisa funcionar sem o cabeçalho `Cross-Origin-Opener-Policy`. [Rota de retorno do MSAL Browser](https://learn.microsoft.com/entra/msal/javascript/browser/redirect-bridge)
+
 ## Development server
 
 To start a local development server, run:

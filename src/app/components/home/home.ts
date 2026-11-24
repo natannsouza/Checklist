@@ -8,12 +8,13 @@ import {
   University,CalendarDays, Dumbbell, Bitcoin 
 } from 'lucide-angular';
 import { Checkbox } from '../checkbox/checkbox';
+import { MicrosoftTodo } from '../microsoft-todo/microsoft-todo';
 import { DatePipe } from '@angular/common';
 import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-home',
-  imports: [LucideAngularModule, Checkbox, DatePipe],
+  imports: [LucideAngularModule, Checkbox, DatePipe, MicrosoftTodo],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

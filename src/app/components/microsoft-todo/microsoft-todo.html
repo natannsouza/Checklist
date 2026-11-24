@@ -1,0 +1,168 @@
+<section
+  aria-labelledby="todo-title"
+  class="w-full min-w-0 rounded-2xl border border-blue-900 bg-zinc-800/85 p-4 text-zinc-100 shadow-md sm:p-5"
+>
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <h2 id="todo-title" class="flex items-center gap-2 text-lg font-semibold">
+      <lucide-icon [img]="icons.ListTodo" class="size-5 text-blue-400" aria-hidden="true" />
+      Microsoft To Do
+    </h2>
+    <a
+      href="https://to-do.office.com/tasks/"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-1.5 rounded text-sm text-blue-300 hover:underline"
+    >
+      Abrir To Do <lucide-icon [img]="icons.ExternalLink" class="size-3.5" aria-hidden="true" />
+    </a>
+  </header>
+
+  @if (busy()) {
+    <p role="status" class="mt-4 text-sm text-zinc-300">Aguarde…</p>
+  }
+  @if (error()) {
+    <p role="alert" class="mt-4 rounded-lg bg-red-950/50 px-3 py-2 text-sm text-red-200">
+      {{ error() }}
+    </p>
+  }
+
+  @if (connected()) {
+    <div class="mt-4 flex flex-wrap items-center gap-2">
+      @if (lists().length) {
+        <label class="min-w-0 flex-1">
+          <span class="sr-only">Lista do Microsoft To Do</span>
+          <select
+            [ngModel]="listId()"
+            (ngModelChange)="selectList($event)"
+            [disabled]="busy()"
+            class="min-h-10 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 text-sm disabled:opacity-60"
+          >
+            @for (list of lists(); track list.id) {
+              <option [value]="list.id">{{ list.displayName }}</option>
+            }
+          </select>
+        </label>
+      }
+      <button
+        type="button"
+        (click)="refresh()"
+        [disabled]="busy()"
+        class="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-slate-600 px-2.5 text-sm hover:bg-slate-700 disabled:opacity-60"
+      >
+        <lucide-icon [img]="icons.RefreshCw" class="size-4" aria-hidden="true" /> Atualizar
+      </button>
+      <button
+        type="button"
+        (click)="disconnect()"
+        [disabled]="busy()"
+        class="min-h-10 rounded px-2 text-sm text-zinc-300 hover:text-white disabled:opacity-60"
+      >
+        Desconectar
+      </button>
+    </div>
+
+    @if (listId()) {
+      <form (ngSubmit)="add()" class="mt-3 flex flex-wrap gap-2">
+        <label class="min-w-28 flex-1">
+          <span class="sr-only">Nova tarefa</span>
+          <input
+            name="title"
+            [(ngModel)]="title"
+            [disabled]="busy()"
+            required
+            placeholder="Nova tarefa"
+            class="min-h-11 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 text-sm placeholder:text-zinc-400"
+          />
+        </label>
+        <button
+          type="submit"
+          [disabled]="busy() || !title.trim()"
+          class="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-blue-700 px-3 text-sm font-medium hover:bg-blue-600 disabled:opacity-60"
+        >
+          <lucide-icon [img]="icons.Plus" class="size-4" aria-hidden="true" /> Adicionar
+        </button>
+      </form>
+
+      @if (tasks().length) {
+        <ul class="mt-4 divide-y divide-slate-700">
+          @for (task of tasks(); track task.id) {
+            <li class="flex min-w-0 items-center gap-2 py-1">
+              <button
+                type="button"
+                (click)="complete(task)"
+                [disabled]="busy()"
+                [attr.aria-label]="'Concluir: ' + task.title"
+                title="Concluir tarefa"
+                class="group grid size-11 shrink-0 place-items-center rounded-lg hover:bg-blue-950 disabled:opacity-60"
+              >
+                <span
+                  class="grid size-6 place-items-center rounded-full border border-blue-400 text-blue-300"
+                >
+                  <lucide-icon
+                    [img]="icons.Check"
+                    class="size-4 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
+                    aria-hidden="true"
+                  />
+                </span>
+              </button>
+              <span class="break-words text-sm [overflow-wrap:anywhere]">{{ task.title }}</span>
+            </li>
+          }
+        </ul>
+      } @else if (!busy() && !error()) {
+        <p class="mt-4 text-sm text-zinc-300">Nenhuma tarefa pendente nesta lista.</p>
+      }
+      @if (completedCount()) {
+        <p role="status" class="mt-3 text-sm text-zinc-400">
+          Concluídas nesta lista: {{ completedCount() }}
+        </p>
+      }
+    } @else if (!busy() && !error()) {
+      <p class="mt-4 text-sm text-zinc-300">
+        Crie uma lista no Microsoft To Do e depois atualize o painel.
+      </p>
+    }
+  } @else {
+    @if (configured()) {
+      <button
+        type="button"
+        (click)="connect()"
+        [disabled]="busy()"
+        class="mt-4 min-h-11 rounded-lg bg-blue-700 px-4 text-sm font-medium hover:bg-blue-600 disabled:opacity-60"
+      >
+        Conectar conta Microsoft
+      </button>
+    }
+    <details class="mt-4 text-sm" [open]="!configured()">
+      <summary class="cursor-pointer rounded font-medium text-blue-300">Configurar conexão</summary>
+      <form (ngSubmit)="configure()" class="mt-3 grid gap-3">
+        <p class="text-zinc-300">
+          Cadastre o Checklist no Microsoft Entra como aplicativo de página única (SPA). Use este
+          URI de redirecionamento:
+        </p>
+        <code class="select-all break-all rounded bg-slate-900 px-3 py-2 text-xs text-blue-200">{{
+          redirectUri
+        }}</code>
+        <label class="grid gap-1.5">
+          ID do aplicativo (cliente)
+          <input
+            name="clientId"
+            [(ngModel)]="clientId"
+            required
+            autocomplete="off"
+            spellcheck="false"
+            [disabled]="busy()"
+            class="min-h-11 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 text-sm"
+          />
+        </label>
+        <button
+          type="submit"
+          [disabled]="busy()"
+          class="min-h-10 justify-self-start rounded-lg border border-slate-600 px-3 hover:bg-slate-700 disabled:opacity-60"
+        >
+          Salvar configuração
+        </button>
+      </form>
+    </details>
+  }
+</section>

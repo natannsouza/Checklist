@@ -1,5 +1,5 @@
-import { DatePipe } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { DatePipe, formatDate } from '@angular/common';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   Check,
@@ -20,6 +20,8 @@ import {
 const clientIdKey = 'checklist.microsoftTodo.clientId';
 const clientIdPattern = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 
+type TaskOrder = 'list' | 'nearest' | 'farthest';
+
 @Component({
   selector: 'app-microsoft-todo',
   imports: [DatePipe, FormsModule, LucideAngularModule],
@@ -37,7 +39,24 @@ export class MicrosoftTodo implements OnInit {
   protected readonly error = signal('');
   protected readonly lists = signal<TodoList[]>([]);
   protected readonly listId = signal('');
-  protected readonly tasks = signal<TodoTask[]>([]);
+  private readonly tasks = signal<TodoTask[]>([]);
+  protected readonly taskOrder = signal<TaskOrder>('list');
+  protected readonly displayedTasks = computed(() => {
+    const order = this.taskOrder();
+    const rows = this.tasks().map((task) => {
+      const due = task.dueDateTime;
+      const date = due?.timeZone === 'UTC' ? `${due.dateTime}Z` : due?.dateTime.slice(0, 10);
+      return { task, dueDay: date ? formatDate(date, 'yyyy-MM-dd', 'en-US') : '' };
+    });
+    if (order === 'list') return rows;
+
+    const direction = order === 'nearest' ? 1 : -1;
+    return rows.sort((first, second) => {
+      if (!first.dueDay) return second.dueDay ? 1 : 0;
+      if (!second.dueDay) return -1;
+      return direction * first.dueDay.localeCompare(second.dueDay);
+    });
+  });
   protected readonly completedCount = signal(0);
   protected title = '';
   protected dueDate = '';

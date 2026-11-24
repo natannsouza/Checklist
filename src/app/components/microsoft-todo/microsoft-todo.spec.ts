@@ -3,6 +3,77 @@ import { MicrosoftTodo } from './microsoft-todo';
 import { MicrosoftTodoApi, TodoTask } from './microsoft-todo-api';
 
 describe('MicrosoftTodo', () => {
+  it('orders by the displayed due day and keeps undated tasks last in both directions', async () => {
+    const configKey = 'checklist.microsoftTodo.clientId';
+    const tasks: TodoTask[] = [
+      { id: 'undated', title: 'Sem prazo', status: 'notStarted' },
+      {
+        id: 'later',
+        title: 'Prazo distante',
+        status: 'notStarted',
+        dueDateTime: { dateTime: '2026-12-01T00:00:00', timeZone: 'America/Sao_Paulo' },
+      },
+      {
+        id: 'earlier',
+        title: 'Prazo próximo',
+        status: 'notStarted',
+        dueDateTime: { dateTime: '2026-11-30T03:00:00', timeZone: 'UTC' },
+      },
+    ];
+    const api = {
+      initialize: vi.fn(async () => true),
+      lists: vi.fn(async () => [
+        { id: 'default', displayName: 'Tarefas', wellknownListName: 'defaultList' },
+      ]),
+      tasks: vi.fn(async () => tasks),
+    };
+
+    localStorage.setItem(configKey, '01234567-89ab-cdef-0123-456789abcdef');
+    try {
+      TestBed.configureTestingModule({ imports: [MicrosoftTodo] }).overrideComponent(
+        MicrosoftTodo,
+        {
+          set: { providers: [{ provide: MicrosoftTodoApi, useValue: api }] },
+        },
+      );
+      const fixture = TestBed.createComponent(MicrosoftTodo);
+      const panel = fixture.nativeElement as HTMLElement;
+      await fixture.whenStable();
+
+      await vi.waitFor(() => expect(panel.textContent).toContain('Ordenar por'));
+      const picker = panel.querySelectorAll('select')[1];
+      const taskLabels = () =>
+        [...panel.querySelectorAll('li button')].map((button) => button.getAttribute('aria-label'));
+      expect(picker.value).toBe('list');
+      expect(taskLabels()).toEqual([
+        'Concluir: Sem prazo',
+        'Concluir: Prazo distante',
+        'Concluir: Prazo próximo',
+      ]);
+
+      picker.value = 'nearest';
+      picker.dispatchEvent(new Event('change'));
+      await fixture.whenStable();
+      expect(taskLabels()).toEqual([
+        'Concluir: Prazo próximo',
+        'Concluir: Prazo distante',
+        'Concluir: Sem prazo',
+      ]);
+
+      picker.value = 'farthest';
+      picker.dispatchEvent(new Event('change'));
+      await fixture.whenStable();
+      expect(taskLabels()).toEqual([
+        'Concluir: Prazo distante',
+        'Concluir: Prazo próximo',
+        'Concluir: Sem prazo',
+      ]);
+      expect(api.tasks).toHaveBeenCalledOnce();
+    } finally {
+      localStorage.removeItem(configKey);
+    }
+  });
+
   it.each(['2026-11-28', ''])('adds and completes a task with due date "%s"', async (dueDate) => {
     const configKey = 'checklist.microsoftTodo.clientId';
     const lists = [

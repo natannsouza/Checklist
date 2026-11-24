@@ -1,7 +1,7 @@
 <th scope="row" [attr.title]="description() || habitName()">
   <div class="habit">
-    <lucide-icon class="size-5 shrink-0 text-blue-300" [img]="habitIcon()" aria-hidden="true" />
-    <span class="habit-name">{{ habitName() }}</span>
+    <lucide-icon class="size-5 shrink-0 text-blue-700" [img]="habitIcon()" aria-hidden="true" />
+    <span>{{ habitName() }}</span>
   </div>
 </th>
 @for (item of items(); track item.id; let i = $index) {

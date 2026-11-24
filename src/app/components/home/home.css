@@ -1,5 +1,6 @@
 .weekly-checks {
   container: weekly-checks / inline-size;
+  margin-top: 1rem;
 }
 
 .weekly-grid {
@@ -10,13 +11,16 @@
 
 .weekly-grid thead th {
   padding-block-end: 0.625rem;
-  color: #bfdbfe;
+  color: var(--color-blue-800);
   font-size: 0.75rem;
   font-weight: 600;
   text-align: center;
 }
 
-.habit-column,
+.habit-column {
+  width: 4rem;
+}
+
 .reset-column {
   width: 2rem;
 }

@@ -165,14 +165,27 @@
     }
   } @else {
     @if (configured()) {
-      <button
-        type="button"
-        (click)="connect()"
-        [disabled]="busy()"
-        class="dashboard-button dashboard-button-primary mt-4"
-      >
-        Conectar conta Microsoft
-      </button>
+      <div class="mt-4 flex flex-col items-start gap-3">
+        <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+          <input
+            #rememberCheckbox
+            type="checkbox"
+            class="size-4 accent-blue-700 dark:accent-blue-400"
+            [checked]="rememberConnection()"
+            [disabled]="busy()"
+            (change)="updateRememberConnection(rememberCheckbox)"
+          />
+          Manter conexão neste navegador
+        </label>
+        <button
+          type="button"
+          (click)="connect()"
+          [disabled]="busy()"
+          class="dashboard-button dashboard-button-primary"
+        >
+          Conectar conta Microsoft
+        </button>
+      </div>
     }
     <details class="mt-4 text-sm" [open]="!configured()">
       <summary class="cursor-pointer rounded font-medium text-blue-700 dark:text-blue-300">

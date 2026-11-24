@@ -3,6 +3,76 @@ import { MicrosoftTodo } from './microsoft-todo';
 import { MicrosoftTodoApi, TodoTask } from './microsoft-todo-api';
 
 describe('MicrosoftTodo', () => {
+  it('restores an opted-in connection on reopen and clears it on disconnect', async () => {
+    const configKey = 'checklist.microsoftTodo.clientId';
+    const rememberKey = 'checklist.microsoftTodo.rememberConnection';
+    const clientId = '01234567-89ab-cdef-0123-456789abcdef';
+    let persistentCache = false;
+    let savedAccount = false;
+    const api = {
+      initialize: vi.fn(async (_clientId: string, remember: boolean) => {
+        persistentCache = remember;
+        return remember && savedAccount;
+      }),
+      connect: vi.fn(async () => {
+        savedAccount = persistentCache;
+      }),
+      disconnect: vi.fn(async () => {
+        savedAccount = false;
+      }),
+      lists: vi.fn(async () => []),
+    };
+
+    localStorage.setItem(configKey, clientId);
+    try {
+      TestBed.configureTestingModule({ imports: [MicrosoftTodo] }).overrideComponent(
+        MicrosoftTodo,
+        {
+          set: { providers: [{ provide: MicrosoftTodoApi, useValue: api }] },
+        },
+      );
+      const findButton = (panel: HTMLElement, label: string) =>
+        [...panel.querySelectorAll('button')].find(
+          (button) => button.textContent?.trim() === label,
+        );
+
+      const first = TestBed.createComponent(MicrosoftTodo);
+      const panel = first.nativeElement as HTMLElement;
+      await first.whenStable();
+      const checkbox = panel.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
+      expect(checkbox.checked).toBe(false);
+      expect(api.initialize).toHaveBeenLastCalledWith(clientId, false);
+
+      await vi.waitFor(() => expect(checkbox.disabled).toBe(false));
+      checkbox.click();
+      await vi.waitFor(() => expect(localStorage.getItem(rememberKey)).toBe('true'));
+      await vi.waitFor(() =>
+        expect(findButton(panel, 'Conectar conta Microsoft')?.disabled).toBe(false),
+      );
+      findButton(panel, 'Conectar conta Microsoft')!.click();
+      await vi.waitFor(() => expect(findButton(panel, 'Desconectar')?.disabled).toBe(false));
+      first.destroy();
+
+      const reopened = TestBed.createComponent(MicrosoftTodo);
+      const reopenedPanel = reopened.nativeElement as HTMLElement;
+      await vi.waitFor(() =>
+        expect(findButton(reopenedPanel, 'Desconectar')?.disabled).toBe(false),
+      );
+      expect(api.initialize).toHaveBeenLastCalledWith(clientId, true);
+      expect(api.connect).toHaveBeenCalledOnce();
+
+      findButton(reopenedPanel, 'Desconectar')!.click();
+      await vi.waitFor(() =>
+        expect(findButton(reopenedPanel, 'Conectar conta Microsoft')?.disabled).toBe(false),
+      );
+      expect(savedAccount).toBe(false);
+      reopened.destroy();
+    } finally {
+      localStorage.removeItem(configKey);
+      localStorage.removeItem(rememberKey);
+    }
+  });
+
   it('orders by the displayed due day and keeps undated tasks last in both directions', async () => {
     const configKey = 'checklist.microsoftTodo.clientId';
     const tasks: TodoTask[] = [

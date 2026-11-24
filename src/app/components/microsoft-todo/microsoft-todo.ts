@@ -18,6 +18,7 @@ import {
 } from './microsoft-todo-api';
 
 const clientIdKey = 'checklist.microsoftTodo.clientId';
+const rememberConnectionKey = 'checklist.microsoftTodo.rememberConnection';
 const clientIdPattern = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 
 type TaskOrder = 'list' | 'nearest' | 'farthest';
@@ -35,6 +36,7 @@ export class MicrosoftTodo implements OnInit {
   protected readonly redirectUri = microsoftRedirectUri;
   protected readonly configured = signal(false);
   protected readonly connected = signal(false);
+  protected readonly rememberConnection = signal(false);
   protected readonly busy = signal(false);
   protected readonly error = signal('');
   protected readonly lists = signal<TodoList[]>([]);
@@ -65,8 +67,9 @@ export class MicrosoftTodo implements OnInit {
   ngOnInit() {
     void this.run(async () => {
       this.clientId = localStorage.getItem(clientIdKey) ?? '';
+      this.rememberConnection.set(localStorage.getItem(rememberConnectionKey) === 'true');
       if (clientIdPattern.test(this.clientId)) {
-        this.connected.set(await this.api.initialize(this.clientId));
+        this.connected.set(await this.api.initialize(this.clientId, this.rememberConnection()));
         this.configured.set(true);
         if (this.connected()) await this.loadLists();
       }
@@ -82,12 +85,28 @@ export class MicrosoftTodo implements OnInit {
 
     void this.run(async () => {
       this.resetTasks();
-      this.connected.set(await this.api.initialize(clientId));
+      this.connected.set(await this.api.initialize(clientId, this.rememberConnection()));
       localStorage.setItem(clientIdKey, clientId);
       this.clientId = clientId;
       this.configured.set(true);
       if (this.connected()) await this.loadLists();
     }, 'Não foi possível salvar a configuração da Microsoft.');
+  }
+
+  protected async updateRememberConnection(checkbox: HTMLInputElement) {
+    const remember = checkbox.checked;
+    await this.run(async () => {
+      const clientId = localStorage.getItem(clientIdKey);
+      if (!clientId) throw new Error('A configuração da Microsoft não está disponível.');
+
+      await this.api.disconnect();
+      const connected = await this.api.initialize(clientId, remember);
+      localStorage.setItem(rememberConnectionKey, String(remember));
+      this.rememberConnection.set(remember);
+      this.connected.set(connected);
+      if (connected) await this.loadLists();
+    }, 'Não foi possível salvar a preferência de conexão.');
+    checkbox.checked = this.rememberConnection();
   }
 
   protected connect() {

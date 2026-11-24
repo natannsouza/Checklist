@@ -57,8 +57,8 @@
     </div>
 
     @if (listId()) {
-      <form (ngSubmit)="add()" class="mt-3 flex flex-wrap gap-2">
-        <label class="min-w-28 flex-1">
+      <form (ngSubmit)="add()" class="mt-3 grid gap-2">
+        <label>
           <span class="sr-only">Nova tarefa</span>
           <input
             name="title"
@@ -69,13 +69,28 @@
             class="dashboard-field"
           />
         </label>
-        <button
-          type="submit"
-          [disabled]="busy() || !title.trim()"
-          class="dashboard-button dashboard-button-primary"
-        >
-          <lucide-icon [img]="icons.Plus" class="size-4" aria-hidden="true" /> Adicionar
-        </button>
+        <div class="flex flex-wrap items-end justify-between gap-2">
+          <label class="grid min-w-0 gap-1 text-sm text-slate-700 dark:text-slate-300">
+            <span
+              >Data de conclusão
+              <span class="text-slate-600 dark:text-slate-400">(opcional)</span></span
+            >
+            <input
+              type="date"
+              name="dueDate"
+              [(ngModel)]="dueDate"
+              [disabled]="busy()"
+              class="dashboard-field"
+            />
+          </label>
+          <button
+            type="submit"
+            [disabled]="busy() || !title.trim()"
+            class="dashboard-button dashboard-button-primary"
+          >
+            <lucide-icon [img]="icons.Plus" class="size-4" aria-hidden="true" /> Adicionar
+          </button>
+        </div>
       </form>
 
       @if (tasks().length) {
@@ -104,7 +119,18 @@
                   />
                 </span>
               </button>
-              <span class="break-words text-sm [overflow-wrap:anywhere]">{{ task.title }}</span>
+              <div class="min-w-0 text-sm [overflow-wrap:anywhere]">
+                <span>{{ task.title }}</span>
+                @if (task.dueDateTime; as due) {
+                  @let date =
+                    due.timeZone === 'UTC' ? due.dateTime + 'Z' : due.dateTime.slice(0, 10);
+                  <time
+                    class="block text-xs text-blue-700 dark:text-blue-300"
+                    [attr.datetime]="date | date: 'yyyy-MM-dd'"
+                    >Até {{ date | date: 'dd/MM/yyyy' }}</time
+                  >
+                }
+              </div>
             </li>
           }
         </ul>

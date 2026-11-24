@@ -16,6 +16,7 @@ export interface TodoTask {
   id: string;
   title: string;
   status: string;
+  dueDateTime?: { dateTime: string; timeZone: string } | null;
 }
 
 export class MicrosoftSessionExpired extends Error {}
@@ -63,8 +64,15 @@ export class MicrosoftTodoApi {
     return this.collection<TodoTask>(this.taskPath(listId));
   }
 
-  add(listId: string, title: string) {
-    return this.request<TodoTask>(this.taskPath(listId), 'POST', { title });
+  add(listId: string, title: string, dueDate?: string) {
+    const body: Pick<TodoTask, 'title' | 'dueDateTime'> = { title };
+    if (dueDate) {
+      body.dueDateTime = {
+        dateTime: `${dueDate}T00:00:00`,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
+    }
+    return this.request<TodoTask>(this.taskPath(listId), 'POST', body);
   }
 
   complete(listId: string, taskId: string) {

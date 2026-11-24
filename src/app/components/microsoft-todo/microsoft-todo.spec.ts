@@ -3,7 +3,7 @@ import { MicrosoftTodo } from './microsoft-todo';
 import { MicrosoftTodoApi, TodoTask } from './microsoft-todo-api';
 
 describe('MicrosoftTodo', () => {
-  it('adds and completes a task in the chosen Microsoft To Do list', async () => {
+  it.each(['2026-11-28', ''])('adds and completes a task with due date "%s"', async (dueDate) => {
     const configKey = 'checklist.microsoftTodo.clientId';
     const lists = [
       { id: 'studies', displayName: 'Estudos', wellknownListName: 'none' },
@@ -15,8 +15,14 @@ describe('MicrosoftTodo', () => {
       connect: vi.fn(async () => {}),
       lists: vi.fn(async () => lists),
       tasks: vi.fn(async () => tasks.map((task) => ({ ...task }))),
-      add: vi.fn(async (_listId: string, title: string) => {
-        const task = { id: 'review', title, status: 'notStarted' };
+      add: vi.fn(async (_listId: string, title: string, date?: string) => {
+        const task: TodoTask = { id: 'review', title, status: 'notStarted' };
+        if (date) {
+          task.dueDateTime = {
+            dateTime: new Date(`${date}T00:00:00`).toISOString().slice(0, -1),
+            timeZone: 'UTC',
+          };
+        }
         tasks.push(task);
         return { ...task };
       }),
@@ -50,10 +56,21 @@ describe('MicrosoftTodo', () => {
       const input = panel.querySelector<HTMLInputElement>('input[name="title"]')!;
       input.value = '  Revisar para N3  ';
       input.dispatchEvent(new Event('input'));
+      const dateInput = panel.querySelector<HTMLInputElement>('input[name="dueDate"]')!;
+      dateInput.value = dueDate;
+      dateInput.dispatchEvent(new Event('input'));
       await fixture.whenStable();
       panel.querySelector<HTMLButtonElement>('button[type="submit"]')!.click();
       await fixture.whenStable();
-      expect(api.add).toHaveBeenCalledWith('studies', 'Revisar para N3');
+      expect(api.add).toHaveBeenCalledWith('studies', 'Revisar para N3', dueDate || undefined);
+      expect(dateInput.value).toBe('');
+      const displayedDate = panel.querySelector('li time');
+      if (dueDate) {
+        expect(displayedDate?.getAttribute('datetime')).toBe(dueDate);
+        expect(displayedDate?.textContent?.trim()).toBe('Até 28/11/2026');
+      } else {
+        expect(displayedDate).toBeNull();
+      }
 
       panel.querySelector<HTMLButtonElement>('[aria-label="Concluir: Revisar para N3"]')!.click();
       await fixture.whenStable();

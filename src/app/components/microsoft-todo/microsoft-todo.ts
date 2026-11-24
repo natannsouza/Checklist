@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -21,7 +22,7 @@ const clientIdPattern = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 
 @Component({
   selector: 'app-microsoft-todo',
-  imports: [FormsModule, LucideAngularModule],
+  imports: [DatePipe, FormsModule, LucideAngularModule],
   providers: [MicrosoftTodoApi],
   templateUrl: './microsoft-todo.html',
 })
@@ -39,6 +40,7 @@ export class MicrosoftTodo implements OnInit {
   protected readonly tasks = signal<TodoTask[]>([]);
   protected readonly completedCount = signal(0);
   protected title = '';
+  protected dueDate = '';
   protected clientId = '';
 
   ngOnInit() {
@@ -72,7 +74,7 @@ export class MicrosoftTodo implements OnInit {
   protected connect() {
     void this.run(async () => {
       this.resetTasks();
-      this.title = '';
+      this.resetDraft();
       await this.api.connect();
       this.connected.set(true);
       await this.loadLists();
@@ -83,7 +85,7 @@ export class MicrosoftTodo implements OnInit {
     void this.run(async () => {
       await this.api.disconnect();
       this.connected.set(false);
-      this.title = '';
+      this.resetDraft();
       this.resetTasks();
     }, 'Não foi possível desconectar a conta Microsoft.');
   }
@@ -106,12 +108,13 @@ export class MicrosoftTodo implements OnInit {
   protected add() {
     const title = this.title.trim();
     const listId = this.listId();
+    const dueDate = this.dueDate || undefined;
     if (!title || !listId) return;
 
     void this.run(async () => {
-      const task = await this.api.add(listId, title);
+      const task = await this.api.add(listId, title, dueDate);
       this.tasks.update((tasks) => [task, ...tasks]);
-      this.title = '';
+      this.resetDraft();
     }, 'Não foi possível confirmar a adição. Atualize a lista antes de tentar de novo.');
   }
 
@@ -153,6 +156,11 @@ export class MicrosoftTodo implements OnInit {
     this.lists.set([]);
     this.listId.set('');
     this.setTasks([]);
+  }
+
+  private resetDraft() {
+    this.title = '';
+    this.dueDate = '';
   }
 
   private async run(action: () => Promise<void>, failureMessage: string) {

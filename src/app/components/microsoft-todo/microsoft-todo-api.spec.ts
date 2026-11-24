@@ -1,8 +1,14 @@
 import { MicrosoftTodoApi } from './microsoft-todo-api';
 
+const configuredCaches = vi.hoisted(() => vi.fn());
+
 vi.mock('@azure/msal-browser', () => ({
   InteractionRequiredAuthError: Error,
   PublicClientApplication: class {
+    constructor(config: { cache: { cacheLocation: string } }) {
+      configuredCaches(config.cache.cacheLocation);
+    }
+
     async initialize() {}
 
     getActiveAccount() {
@@ -14,6 +20,17 @@ vi.mock('@azure/msal-browser', () => ({
     }
   },
 }));
+
+describe('MicrosoftTodoApi.initialize', () => {
+  it('uses persistent MSAL storage only when requested', async () => {
+    const api = new MicrosoftTodoApi();
+    await api.initialize('test-client');
+    expect(configuredCaches).toHaveBeenLastCalledWith('sessionStorage');
+
+    await api.initialize('test-client', true);
+    expect(configuredCaches).toHaveBeenLastCalledWith('localStorage');
+  });
+});
 
 describe('MicrosoftTodoApi.add', () => {
   it('sends a local calendar date to Microsoft Graph only when one is selected', async () => {

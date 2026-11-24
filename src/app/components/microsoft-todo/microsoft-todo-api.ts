@@ -26,7 +26,7 @@ export class MicrosoftTodoApi {
   private client?: PublicClientApplication;
   private authError?: (typeof import('@azure/msal-browser'))['InteractionRequiredAuthError'];
 
-  async initialize(clientId: string) {
+  async initialize(clientId: string, rememberConnection = false) {
     const { InteractionRequiredAuthError, PublicClientApplication } =
       await import('@azure/msal-browser');
     const client = new PublicClientApplication({
@@ -35,7 +35,7 @@ export class MicrosoftTodoApi {
         authority: 'https://login.microsoftonline.com/common',
         redirectUri: microsoftRedirectUri,
       },
-      cache: { cacheLocation: 'sessionStorage' },
+      cache: { cacheLocation: rememberConnection ? 'localStorage' : 'sessionStorage' },
     });
     await client.initialize();
     this.client = client;

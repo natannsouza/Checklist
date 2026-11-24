@@ -63,10 +63,10 @@
             <thead>
               <tr>
                 <th scope="col"><span class="sr-only">Hábito</span></th>
-                @for (day of weekDays; track day) {
-                  <th scope="col" [attr.title]="day">
-                    <span aria-hidden="true">{{ day[0] }}</span>
-                    <span class="sr-only">{{ day }}</span>
+                @for (day of weekDays; track day.name) {
+                  <th scope="col" [attr.title]="day.name">
+                    <span aria-hidden="true">{{ day.name[0] }}</span>
+                    <span class="sr-only">{{ day.name }}</span>
                   </th>
                 }
                 <th scope="col"><span class="sr-only">Limpar linha</span></th>

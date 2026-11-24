@@ -2,14 +2,15 @@ import { Component, input, signal } from '@angular/core';
 import { Check, LucideAngularModule, Trash2, X } from 'lucide-angular';
 import type { LucideIconData } from 'lucide-angular';
 
+// Saved rows still use the original Monday-first positions.
 export const weekDays = [
-  'Segunda-feira',
-  'Terça-feira',
-  'Quarta-feira',
-  'Quinta-feira',
-  'Sexta-feira',
-  'Sábado',
-  'Domingo',
+  { name: 'Domingo', storageIndex: 6 },
+  { name: 'Segunda-feira', storageIndex: 0 },
+  { name: 'Terça-feira', storageIndex: 1 },
+  { name: 'Quarta-feira', storageIndex: 2 },
+  { name: 'Quinta-feira', storageIndex: 3 },
+  { name: 'Sexta-feira', storageIndex: 4 },
+  { name: 'Sábado', storageIndex: 5 },
 ] as const;
 
 @Component({

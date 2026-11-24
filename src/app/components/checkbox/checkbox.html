@@ -8,18 +8,19 @@
     <span>{{ habitName() }}</span>
   </div>
 </th>
-@for (item of items(); track item.id; let i = $index) {
+@for (day of weekDays; track day.name) {
+  @let state = items()[day.storageIndex].state;
   <td>
     <button
       type="button"
       class="day-button"
-      [attr.aria-label]="habitName() + ', ' + weekDays[i] + ', ' + states[item.state]"
-      (click)="toggle(i)"
+      [attr.aria-label]="habitName() + ', ' + day.name + ', ' + states[state]"
+      (click)="toggle(day.storageIndex)"
     >
-      <span class="check-mark" [class.done]="item.state === 1" [class.missed]="item.state === 2">
-        @if (item.state === 1) {
+      <span class="check-mark" [class.done]="state === 1" [class.missed]="state === 2">
+        @if (state === 1) {
           <lucide-icon class="size-4" [img]="icons.Check" aria-hidden="true" />
-        } @else if (item.state === 2) {
+        } @else if (state === 2) {
           <lucide-icon class="size-4" [img]="icons.X" aria-hidden="true" />
         }
       </span>

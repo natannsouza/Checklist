@@ -27,7 +27,7 @@ describe('Home', () => {
     );
     const rows = [...page.querySelectorAll('tbody tr')];
 
-    expect(initials).toEqual(['S', 'T', 'Q', 'Q', 'S', 'S', 'D']);
+    expect(initials).toEqual(['D', 'S', 'T', 'Q', 'Q', 'S', 'S']);
     expect(rows.map((row) => row.querySelector('th')?.textContent?.trim())).toEqual([
       'Faculdade',
       'Musculação',

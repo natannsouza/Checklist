@@ -41,15 +41,39 @@ describe('Home', () => {
   });
 
   it.each([
-    [new Date(2026, 2, 1), 'março de 2026', '1ª semana do mês'],
-    [new Date(2026, 2, 2), 'março de 2026', '2ª semana do mês'],
-    [new Date(2026, 7, 31), 'agosto de 2026', '6ª semana do mês'],
-  ])('shows the month and Monday-based week for %s', async (date, month, week) => {
+    [new Date(2026, 10, 22), 'novembro de 2026', 'Semana de 22/11 a 28/11'],
+    [new Date(2026, 10, 28), 'novembro de 2026', 'Semana de 22/11 a 28/11'],
+    [new Date(2026, 11, 31), 'dezembro de 2026', 'Semana de 27/12 a 02/01'],
+  ])('shows the month and Sunday-to-Saturday week for %s', async (date, month, week) => {
     component.data.set(date);
     await fixture.whenStable();
 
     const page = fixture.nativeElement as HTMLElement;
     expect(page.querySelector('h1')?.textContent?.trim()).toBe(month);
-    expect(page.querySelector('[data-week-of-month]')?.textContent).toBe(week);
+    expect(page.querySelector('[data-week-range]')?.textContent?.trim()).toBe(week);
+  });
+
+  it('toggles the dashboard theme and restores it when reopened', async () => {
+    const key = 'checklist.theme';
+    const previous = localStorage.getItem(key);
+    const page = fixture.nativeElement as HTMLElement;
+
+    try {
+      const toggle = page.querySelector<HTMLButtonElement>('header button[aria-pressed]')!;
+      toggle.click();
+      await fixture.whenStable();
+      const theme = page.querySelector('main')?.getAttribute('data-theme');
+      expect(theme).toBe(previous === 'dark' ? 'light' : 'dark');
+      expect(localStorage.getItem(key)).toBe(theme);
+
+      const reopened = TestBed.createComponent(Home);
+      await reopened.whenStable();
+      const reopenedPage = reopened.nativeElement as HTMLElement;
+      expect(reopenedPage.querySelector('main')?.getAttribute('data-theme')).toBe(theme);
+      reopened.destroy();
+    } finally {
+      if (previous === null) localStorage.removeItem(key);
+      else localStorage.setItem(key, previous);
+    }
   });
 });

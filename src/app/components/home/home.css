@@ -1,6 +1,23 @@
 .weekly-checks {
   container: weekly-checks / inline-size;
   margin-top: 1rem;
+  --check-line: var(--color-blue-100);
+  --check-edge: var(--color-blue-500);
+  --check-ink: var(--color-blue-900);
+  --check-accent: var(--color-blue-700);
+  --check-quiet: var(--color-blue-100);
+  --check-filled: var(--color-blue-700);
+  --check-surface: white;
+}
+
+main[data-theme='dark'] .weekly-checks {
+  --check-line: var(--color-blue-900);
+  --check-edge: var(--color-blue-400);
+  --check-ink: var(--color-blue-100);
+  --check-accent: var(--color-blue-300);
+  --check-quiet: var(--color-blue-950);
+  --check-filled: var(--color-blue-600);
+  --check-surface: var(--color-slate-950);
 }
 
 .weekly-grid {
@@ -11,7 +28,7 @@
 
 .weekly-grid thead th {
   padding-block-end: 0.625rem;
-  color: var(--color-blue-800);
+  color: var(--check-ink);
   font-size: 0.75rem;
   font-weight: 600;
   text-align: center;

@@ -1,29 +1,46 @@
-<main class="min-h-screen bg-blue-50/70 px-3 py-6 text-slate-900 sm:px-6 sm:py-10 lg:px-8">
+<main
+  [attr.data-theme]="darkMode() ? 'dark' : 'light'"
+  class="min-h-screen bg-blue-50/70 px-3 py-6 text-slate-900 sm:px-6 sm:py-10 lg:px-8 dark:bg-slate-950 dark:text-slate-100 dark:scheme-dark"
+>
   <div class="mx-auto max-w-7xl">
     <header
-      class="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 border-b border-blue-200/80 px-1 pb-5 sm:mb-8 sm:pb-6"
+      class="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 border-b border-blue-200/80 px-1 pb-5 sm:mb-8 sm:pb-6 dark:border-blue-900"
     >
       <div>
         <h1
-          class="text-3xl font-semibold tracking-tight text-blue-950 first-letter:uppercase sm:text-5xl"
+          class="text-3xl font-semibold tracking-tight text-blue-950 first-letter:uppercase sm:text-5xl dark:text-blue-50"
         >
           {{ month() }}
         </h1>
         <p
-          class="mt-3 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-900"
+          class="mt-3 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-900 dark:bg-blue-950 dark:text-blue-100"
         >
           <lucide-icon [img]="calendarIcon" class="size-4" aria-hidden="true" />
-          <span data-week-of-month>{{ weekOfMonth() }}ª semana do mês</span>
+          <span data-week-range
+            >Semana de {{ week().start | date: 'dd/MM' }} a {{ week().end | date: 'dd/MM' }}</span
+          >
         </p>
       </div>
-      <time
-        class="font-mono text-2xl font-semibold tracking-tight text-blue-900 tabular-nums sm:text-3xl"
-        [attr.datetime]="data() | date: 'HH:mm:ss'"
-      >
-        <span class="sr-only">Horário atual </span>
-        {{ data() | date: 'HH:mm'
-        }}<span class="text-base text-blue-700 sm:text-lg">:{{ data() | date: 'ss' }}</span>
-      </time>
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <time
+          class="font-mono text-2xl font-semibold tracking-tight text-blue-900 tabular-nums sm:text-3xl dark:text-blue-100"
+          [attr.datetime]="data() | date: 'HH:mm:ss'"
+        >
+          <span class="sr-only">Horário atual </span>
+          {{ data() | date: 'HH:mm'
+          }}<span class="text-base text-blue-700 sm:text-lg dark:text-blue-300"
+            >:{{ data() | date: 'ss' }}</span
+          >
+        </time>
+        <button
+          type="button"
+          class="dashboard-button focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          [attr.aria-pressed]="darkMode()"
+          (click)="toggleTheme()"
+        >
+          <lucide-icon [img]="themeIcon" class="size-4" aria-hidden="true" /> Modo escuro
+        </button>
+      </div>
     </header>
 
     <div class="grid items-start gap-5 lg:grid-cols-2 lg:gap-6">

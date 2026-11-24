@@ -41,15 +41,15 @@ describe('Home', () => {
   });
 
   it.each([
-    [new Date(2026, 10, 22), 'novembro de 2026', 'Semana de 22/11 a 28/11'],
-    [new Date(2026, 10, 28), 'novembro de 2026', 'Semana de 22/11 a 28/11'],
-    [new Date(2026, 11, 31), 'dezembro de 2026', 'Semana de 27/12 a 02/01'],
-  ])('shows the month and Sunday-to-Saturday week for %s', async (date, month, week) => {
+    [new Date(2026, 10, 23), '23 de novembro de 2026', 'Semana de 22/11 a 28/11'],
+    [new Date(2026, 10, 28), '28 de novembro de 2026', 'Semana de 22/11 a 28/11'],
+    [new Date(2026, 11, 31), '31 de dezembro de 2026', 'Semana de 27/12 a 02/01'],
+  ])('shows the full date and Sunday-to-Saturday week for %s', async (date, dateLabel, week) => {
     component.data.set(date);
     await fixture.whenStable();
 
     const page = fixture.nativeElement as HTMLElement;
-    expect(page.querySelector('h1')?.textContent?.trim()).toBe(month);
+    expect(page.querySelector('h1')?.textContent?.trim()).toBe(dateLabel);
     expect(page.querySelector('[data-week-range]')?.textContent?.trim()).toBe(week);
   });
 

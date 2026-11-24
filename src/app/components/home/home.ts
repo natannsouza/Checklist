@@ -14,7 +14,11 @@ import { MicrosoftTodo } from '../microsoft-todo/microsoft-todo';
 import { DatePipe } from '@angular/common';
 import { interval } from 'rxjs';
 
-const monthFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
+const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
 const themeKey = 'checklist.theme';
 
 @Component({
@@ -42,7 +46,7 @@ export class Home implements OnInit {
   ];
 
   readonly data = signal(new Date());
-  protected readonly month = computed(() => monthFormatter.format(this.data()));
+  protected readonly dateLabel = computed(() => dateFormatter.format(this.data()));
   protected readonly week = computed(() => {
     const today = this.data();
     const year = today.getFullYear();

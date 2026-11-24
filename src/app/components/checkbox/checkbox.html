@@ -1,31 +1,35 @@
-<div class="w-full space-y-3">
-  <div class="grid grid-cols-8 gap-2 mx-2 p-2 rounded-sm items-stretch">
-    @for (array of items(); track array.id; let i = $index) {
-      <label
-        class="flex items-center justify-center transition-all group cursor-pointer "
-      >
-        <p class="hidden">{{ storageKey() }}</p>
-        <span
-          (click)="toggle(i)"
-          class="w-full aspect-square border-2 rounded-sm border-blue-900 flex items-center justify-center cursor-pointer hover:bg-zinc-700/90"
-        >
-          @if (array.state === 1) {
-            <lucide-icon class="w-3 h-3 text-white md:w-5 md:h-5" [img]="icons.Check" />
-          }
-          @if (array.state === 2) {
-            <lucide-icon class="w-3 h-3 text-white md:w-5 md:h-5" [img]="icons.X" />
-          }
-        </span>
-      </label>
-    }
-
-    <div class="flex justify-center items-center p-1.5 md:p-2 transition-all group">
-      <button class="cursor-pointer p-1 rounded-sm" (click)="toggleNull()">
-        <lucide-icon
-          class="w-4 h-4 md:w-6 md:h-6 text-white hover:text-black"
-          [img]="icons.Trash2"
-        ></lucide-icon>
-      </button>
-    </div>
+<th scope="row" [attr.title]="description() || habitName()">
+  <div class="habit">
+    <lucide-icon class="size-5 shrink-0 text-blue-300" [img]="habitIcon()" aria-hidden="true" />
+    <span class="habit-name">{{ habitName() }}</span>
   </div>
-</div>
+</th>
+@for (item of items(); track item.id; let i = $index) {
+  <td>
+    <button
+      type="button"
+      class="day-button"
+      [attr.aria-label]="habitName() + ', ' + weekDays[i] + ', ' + states[item.state]"
+      (click)="toggle(i)"
+    >
+      <span class="check-mark" [class.done]="item.state === 1" [class.missed]="item.state === 2">
+        @if (item.state === 1) {
+          <lucide-icon class="size-4" [img]="icons.Check" aria-hidden="true" />
+        } @else if (item.state === 2) {
+          <lucide-icon class="size-4" [img]="icons.X" aria-hidden="true" />
+        }
+      </span>
+    </button>
+  </td>
+}
+<td>
+  <button
+    type="button"
+    class="reset-button"
+    [attr.aria-label]="'Limpar marcações de ' + habitName()"
+    [attr.title]="'Limpar marcações de ' + habitName()"
+    (click)="reset()"
+  >
+    <lucide-icon class="size-4" [img]="icons.Trash2" aria-hidden="true" />
+  </button>
+</td>

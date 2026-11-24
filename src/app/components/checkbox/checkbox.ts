@@ -1,24 +1,34 @@
 import { Component, input, signal } from '@angular/core';
-import { Check, CircleX, LucideAngularModule, Trash2, X } from 'lucide-angular';
+import { Check, LucideAngularModule, Trash2, X } from 'lucide-angular';
+import type { LucideIconData } from 'lucide-angular';
 
-interface CheckItem {
-  id: number;
-  state: number;
-  storageKey: string;
-}
+export const weekDays = [
+  'Segunda-feira',
+  'Terça-feira',
+  'Quarta-feira',
+  'Quinta-feira',
+  'Sexta-feira',
+  'Sábado',
+  'Domingo',
+] as const;
 
 @Component({
-  selector: 'app-checkbox',
+  selector: 'tr[app-checkbox]',
   standalone: true,
   imports: [LucideAngularModule],
   templateUrl: './checkbox.html',
   styleUrl: './checkbox.css',
 })
 export class Checkbox {
-  icons = { Trash2, Check, CircleX , X };
+  protected readonly icons = { Trash2, Check, X };
+  protected readonly weekDays = weekDays;
+  protected readonly states = ['Sem marcação', 'Concluído', 'Não concluído'];
 
-  storageKey = input.required<string>();
-  items = signal(Array.from({ length: 7 }, (_, i) => ({ id: i, state: 0 })));
+  readonly storageKey = input.required<string>();
+  readonly habitName = input.required<string>();
+  readonly habitIcon = input.required<LucideIconData>();
+  readonly description = input<string>();
+  protected readonly items = signal(weekDays.map((_, id) => ({ id, state: 0 })));
 
   ngOnInit() {
     const saved = localStorage.getItem(this.storageKey());
@@ -27,7 +37,7 @@ export class Checkbox {
     }
   }
 
-  toggle(index: number) {
+  protected toggle(index: number) {
     const update = this.items().map((item, i) =>
       i === index ? { ...item, state: (item.state + 1) % 3 } : item,
     );
@@ -35,13 +45,12 @@ export class Checkbox {
     this.save();
   }
 
-  toggleNull() {
-    const reset = Array.from({ length: 7 }, (_, i) => ({ id: i, state: 0 }));
-    this.items.set(reset);
+  protected reset() {
+    this.items.set(weekDays.map((_, id) => ({ id, state: 0 })));
     this.save();
   }
 
-  save() {
+  private save() {
     localStorage.setItem(this.storageKey(), JSON.stringify(this.items()));
   }
 }

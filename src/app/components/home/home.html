@@ -42,86 +42,49 @@
 
         <app-microsoft-todo class="w-full min-w-0"></app-microsoft-todo>
       </div>
-      <!-- Right Box -->
-      <div
-        id="left-box"
-        class="w-full md:flex-1 bg-zinc-800/30 backdrop-blur-md rounded-3xl shadow-2xl border border-blue-900/60 p-4 flex flex-col justify-center items-center gap-6"
+      <section
+        aria-labelledby="weekly-checks-title"
+        class="w-full min-w-0 md:flex-1 rounded-3xl border border-blue-900/60 bg-zinc-800/30 p-2.5 sm:p-5 flex flex-col justify-center"
       >
-        <div class="w-full max-w-sm mx-2">
-          <div class="w-full text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-zinc-100 tracking-tight mb-2">
-              Weekly Checks
-            </h1>
-          </div>
-          
-          <div>
-            <div
-              class="flex items-center bg-zinc-800/70 transition-all border border-blue-900 rounded-2xl shadow-sm p-2 my-4"
-            >
-              <lucide-icon
-                class="w-6 h-6 mx-2 text-white shrink-0"
-                [img]="icons.CodeXml"
-              ></lucide-icon>
-              <app-checkbox [storageKey]="'CodeXml'"></app-checkbox>
-            </div>
-          </div>
-          <div>
-            <div
-              class="flex items-center bg-zinc-800/70 transition-all border border-blue-800 rounded-2xl shadow-sm p-2 my-4"
-            >
-              <lucide-icon
-                class="w-6 h-6 mx-2 text-white shrink-0"
-                [img]="icons.Bitcoin"
-              ></lucide-icon>
-              <app-checkbox [storageKey]="'Bitcoin'"></app-checkbox>
-            </div>
-          </div>
-          <div>
-            <div
-              class="flex items-center bg-zinc-800/70 transition-all border border-blue-800 rounded-2xl shadow-sm p-2 my-4"
-            >
-              <lucide-icon
-                class="w-6 h-6 mx-2 text-white shrink-0"
-                [img]="icons.University"
-              ></lucide-icon>
-              <app-checkbox [storageKey]="'University'"></app-checkbox>
-            </div>
-          </div>
-          <div>
-            <div
-              class="flex items-center bg-zinc-800/70 transition-all border border-blue-800 rounded-2xl shadow-sm p-2 my-4"
-            >
-              <lucide-icon
-                class="w-6 h-6 mx-2 text-white shrink-0"
-                [img]="icons.Dumbbell"
-              ></lucide-icon>
-              <app-checkbox [storageKey]="'SquareActivity'"></app-checkbox>
-            </div>
-          </div>
-          <div>
-            <div
-              class="flex items-center bg-zinc-800/70 transition-all border border-blue-800 rounded-2xl shadow-sm p-2 my-4"
-            >
-              <lucide-icon
-                class="w-6 h-6 mx-2 text-white shrink-0"
-                [img]="icons.Languages"
-              ></lucide-icon>
-              <app-checkbox [storageKey]="'Languages'"></app-checkbox>
-            </div>
-          </div>
-          <div>
-            <div
-              class="flex items-center bg-zinc-800/70 transition-all border border-blue-800 rounded-2xl shadow-sm p-2 my-4"
-            >
-              <lucide-icon
-                class="w-6 h-6 mx-2 text-white shrink-0"
-                [img]="icons.Book"
-              ></lucide-icon>
-              <app-checkbox [storageKey]="'Book'"></app-checkbox>
-            </div>
-          </div>
+        <div class="weekly-checks w-full max-w-xl mx-auto">
+          <h1
+            id="weekly-checks-title"
+            class="mb-5 px-2 text-2xl font-semibold tracking-tight text-zinc-100"
+          >
+            Checks da semana
+          </h1>
+          <table aria-labelledby="weekly-checks-title" class="weekly-grid">
+            <colgroup>
+              <col class="habit-column" />
+              <col span="7" />
+              <col class="reset-column" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col"><span class="sr-only">Hábito</span></th>
+                @for (day of weekDays; track day) {
+                  <th scope="col" [attr.title]="day">
+                    <span aria-hidden="true">{{ day[0] }}</span>
+                    <span class="sr-only">{{ day }}</span>
+                  </th>
+                }
+                <th scope="col"><span class="sr-only">Limpar linha</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (habit of habits; track habit.storageKey) {
+                <tr
+                  app-checkbox
+                  [storageKey]="habit.storageKey"
+                  [habitName]="habit.name"
+                  [habitIcon]="habit.icon"
+                  [description]="habit.description"
+                ></tr>
+              }
+            </tbody>
+          </table>
         </div>
-      </div>
+      </section>
     </div>
   </body>
 </html>
